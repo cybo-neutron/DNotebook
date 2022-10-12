@@ -92,7 +92,6 @@ router.post("/login", async (req, res) => {
 });
 
 //Route 3 : /api/auth/getUser :
-
 router.post("/getUser", fetchUser, async (req, res) => {
   console.log(req.user);
 
