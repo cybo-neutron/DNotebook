@@ -3,8 +3,10 @@ const User = require("../models/User");
 const router = express.Router();
 const { body, validationResult, check } = require("express-validator");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const fetchUser = require("../middleware/fetchUser");
 
-//Handles request on /api/auth route
+//Route 1 : /api/auth/createUser :  Creates new user and stores in db.
 router.post(
   "/createUser",
   [
@@ -44,7 +46,15 @@ router.post(
     const user = new User(data);
     try {
       const save = await user.save();
-      res.json(data);
+
+      const data = {
+        user: {
+          id: user._id,
+        },
+      };
+      const authToken = jwt.sign({ data }, process.env.JWT_SECRET);
+
+      res.json({ authToken });
     } catch (err) {
       console.log("err");
       res.status(400).json({ error: "Please fill the data correctly", ...err });
@@ -52,6 +62,7 @@ router.post(
   }
 );
 
+//Route2 : /api/auth/login : Login user with email and password
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
@@ -70,7 +81,27 @@ router.post("/login", async (req, res) => {
     return res.status(400).json({ error: "Username or password is wrong" });
   }
 
-  res.status(200).json({ success: "Logged in successfully" });
+  const data = {
+    user: {
+      id: findUser._id,
+    },
+  };
+  const authToken = jwt.sign(data, process.env.JWT_SECRET);
+
+  res.json({ authToken });
+});
+
+//Route 3 : /api/auth/getUser :
+
+router.post("/getUser", fetchUser, async (req, res) => {
+  console.log(req.user);
+
+  try {
+    const user = await User.findOne({ _id: req.user.id });
+    res.send(user);
+  } catch (err) {
+    res.status(500).send("Internal Server Error");
+  }
 });
 
 module.exports = router;
