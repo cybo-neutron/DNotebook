@@ -5,7 +5,7 @@ const Note = require("../models/Note");
 
 //Route 1 : /api/notes/addNote Create a new note and save it in the database
 router.post("/addNote", fetchUser, async (req, res) => {
-  console.log(req.body);
+  console.log("**** Addnote Recieved body : ", req.body);
 
   const { title, description, tag } = req.body;
   let note = new Note({ title, description, tag, user: req.user.id });
