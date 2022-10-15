@@ -3,14 +3,15 @@ import Image from "next/image";
 import styles from "../styles/Home.module.css";
 import NavBar from "../components/NavBar";
 import Link from "next/link";
-import noteContext from "../context/notes/NoteContext";
+import NoteContext from "../context/notes/NoteContext";
 import { useContext } from "react";
 import AddNote from "../components/AddNote";
 import Notes from "../components/Notes";
 import NoteState from "../context/notes/NoteState";
-export default function Home() {
-  let x = useContext(noteContext);
+import OpenNote from "../components/OpenNote/OpenNote";
+import React, { useState } from "react";
 
+export default function Home() {
   return (
     <>
       <NoteState>

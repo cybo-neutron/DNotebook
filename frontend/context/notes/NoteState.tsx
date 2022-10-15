@@ -7,14 +7,7 @@ export default function NoteState(props) {
   const authToken =
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjM0NDBmODc3MDRiMmFkOGVjYTc0YWM0In0sImlhdCI6MTY2NTYwMjkzOH0.Uopk1VBWZYw8_wVFwagDJ4B91tf-XUsl_T3iVj-WoMg";
 
-  const initialNotes = [
-    {
-      _id: "112323he",
-      title: "First Note",
-      description: "This is my first note",
-      tag: "personal",
-    },
-  ];
+  const initialNotes = [];
   const [notes, setNotes] = useState(initialNotes);
 
   //Get all notes
@@ -47,6 +40,51 @@ export default function NoteState(props) {
       });
       const jsonResponse = await response.json();
       console.log("Added note : ", jsonResponse);
+      // await fetchNotes();
+      setNotes((prevNotes) => [
+        { title, description, tag, _id: jsonResponse._id },
+        ...prevNotes,
+      ]);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  //Delete note
+  const deleteNote = async (id) => {
+    console.log(id);
+    try {
+      const response = await fetch(`${host}/api/notes/deleteNote/${id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: authToken,
+          "Content-Type": "application/json",
+        },
+      });
+      console.log("Deleted note : ", await response.json());
+      // await fetchNotes();
+      //We can also use fetchNotes to update thee notes array. But in my opinion that might be an unnecessary network call.
+      setNotes((prevNotes) => prevNotes.filter((note) => note._id !== id));
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  //Edit note
+  const editNote = async (updatedNote) => {
+    const { _id, title, tag, description } = updatedNote;
+    try {
+      console.log("NoteState editNote", updatedNote);
+      const response = await fetch(`${host}/api/notes/updateNote/${_id}`, {
+        method: "PATCH",
+        headers: {
+          Authorization: authToken,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ title, tag, description }),
+      });
+
+      console.log("====== Updated note : ", await response.json());
       await fetchNotes();
     } catch (err) {
       console.log(err);
@@ -54,7 +92,9 @@ export default function NoteState(props) {
   };
 
   return (
-    <NoteContext.Provider value={{ name, notes, fetchNotes, addNote }}>
+    <NoteContext.Provider
+      value={{ name, notes, fetchNotes, addNote, deleteNote, editNote }}
+    >
       {props.children}
     </NoteContext.Provider>
   );
