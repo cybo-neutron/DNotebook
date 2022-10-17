@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-const NavBar = () => {
+const NavBar = (props) => {
   const router = useRouter();
   // const [path,setPath] = useState(router.pathname);
   // useEffect(() => {
@@ -32,6 +32,10 @@ const NavBar = () => {
           About
         </p>
       </Link>
+
+      <button onClick={() => props.toggleLoggedIn()} className="self-end">
+        Logout
+      </button>
     </nav>
   );
 };

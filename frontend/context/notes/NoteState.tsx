@@ -1,20 +1,30 @@
-import React, { useState } from "react";
+import Router from "next/router";
+import { NextResponse } from "next/server";
+import React, { useState, useEffect } from "react";
 import NoteContext from "./NoteContext";
-
+let authToken = "";
 export default function NoteState(props) {
   const host = "http://localhost:13712";
   //TODO : Replace the Authorization token with the real auth token
-  const authToken =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjM0NDBmODc3MDRiMmFkOGVjYTc0YWM0In0sImlhdCI6MTY2NTYwMjkzOH0.Uopk1VBWZYw8_wVFwagDJ4B91tf-XUsl_T3iVj-WoMg";
 
+  useEffect(() => {
+    authToken = localStorage.getItem("authToken");
+    fetchNotes();
+  }, []);
   const initialNotes = [];
   const [notes, setNotes] = useState(initialNotes);
 
   //Get all notes
   const fetchNotes = async (): Promise<any> => {
+    console.log("****** Front end  : fetchNotes : authToken : ", authToken);
+    if (!authToken || authToken.length === 0) {
+      return Router.push("/");
+    }
+
     const response = await fetch(`${host}/api/notes/fetchNotes`, {
       method: "GET",
       headers: {
+        "Content-Type": "application/json",
         Authorization: authToken,
       },
     });
@@ -28,6 +38,8 @@ export default function NoteState(props) {
 
   //Add note
   const addNote = async (title, tag, description) => {
+    console.log("----------Frontend: addNote------------");
+    console.log({ authToken });
     const data = { tag, title, description };
     try {
       const response = await fetch(`${host}/api/notes/addNote`, {

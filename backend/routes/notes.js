@@ -6,6 +6,7 @@ const Note = require("../models/Note");
 //Route 1 : /api/notes/addNote Create a new note and save it in the database
 router.post("/addNote", fetchUser, async (req, res) => {
   console.log("**** Addnote Recieved body : ", req.body);
+  console.log("**** Addnote recieved user : ", req.user);
 
   const { title, description, tag } = req.body;
   let note = new Note({ title, description, tag, user: req.user.id });
@@ -21,6 +22,9 @@ router.post("/addNote", fetchUser, async (req, res) => {
 
 //Route 2 : /api/notes/fetchNotes (Fetch all notes for the current user)
 router.get("/fetchNotes", fetchUser, async (req, res) => {
+  console.log("---------fetchNotes----------");
+  console.log("***** backend : fetchNotes : req.body : ", req.body);
+  console.log("***** backend : fetchNotes : req.user", req.user);
   try {
     const notes = await Note.find({ user: req.user.id });
     res.send(notes);

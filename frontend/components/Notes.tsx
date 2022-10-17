@@ -7,7 +7,7 @@ const Notes = () => {
   const notes = useContext(NoteContext);
 
   useEffect(() => {
-    notes.fetchNotes();
+    // notes.fetchNotes();
   }, []);
 
   //State to handle the visibility of the modal (preview and edit)

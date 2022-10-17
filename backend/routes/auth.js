@@ -65,7 +65,7 @@ router.post(
 //Route2 : /api/auth/login : Login user with email and password
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
-
+  console.log(req.body);
   const findUser = await User.findOne({ email: email });
 
   //Check if the email is present in the database
@@ -88,7 +88,8 @@ router.post("/login", async (req, res) => {
   };
   const authToken = jwt.sign(data, process.env.JWT_SECRET);
 
-  res.json({ authToken });
+  res.status(200).json({ authToken });
+  // res.send("hello");
 });
 
 //Route 3 : /api/auth/getUser :
