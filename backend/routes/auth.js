@@ -37,6 +37,8 @@ router.post(
         .json({ error: "An account with this email already exists" });
     }
 
+    console.log("reached here");
+
     //Create a new user and try to save in the database.
     const data = {
       name: req.body.name,
